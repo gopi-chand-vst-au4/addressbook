@@ -4,10 +4,7 @@ pipeline{
         jdk 'myjava'
         maven 'mymaven'
     }
-    parameters{
-        choice(name:'VERSION',choices:['1.1.0','1.2.0','1.3.0'],description:'version of the code')
-        booleanParam(name: 'executeTests',defaultValue: true,description:'tc validity')
-    }
+    
     stages{
         stage("COMPILE"){
           
@@ -19,12 +16,6 @@ pipeline{
             }
         }
         stage("UNITTEST"){
-           
-            when{
-                expression{
-                    params.executeTests == true
-                }
-            }
             steps{
                 script{
                     echo "Testing the code"
@@ -37,8 +28,7 @@ pipeline{
                 }
             }
         }
-         stage("PACKAGE"){
-           
+         stage("PACKAGE"){        
            
             steps{
                 script{
@@ -47,14 +37,12 @@ pipeline{
                 }
             }
         }
-         stage("BUILD THE DOCKER IMAGE"){
-         
+         stage("BUILD THE DOCKER IMAGE"){      
             
             steps{
                 script{
                     echo "BUILDING THE DOCKER IMAGE"
-                    echo "Deploying version ${params.VERSION}"
-                    withCredentials([usernamePassword(credentialsId: 'docker-hub', passwordVariable: 'PASS', usernameVariable: 'USER')]) {
+                   withCredentials([usernamePassword(credentialsId: 'docker-hub', passwordVariable: 'PASS', usernameVariable: 'USER')]) {
                         sh 'sudo docker build -t devopstrainer/java-mvn-privaterepo:$BUILD_NUMBER .'
                         sh 'sudo sudo docker login -u $USER -p $PASS'
                         sh 'sudo docker push devopstrainer/java-mvn-privaterepo:$BUILD_NUMBER'
@@ -62,14 +50,12 @@ pipeline{
             }
         }
          }
-        stage("DEPLOY"){
-            
+        stage("DEPLOY"){          
             
             steps{
                 script{
                     echo "Deploying the app"
-                    echo "Deploying version ${params.VERSION}"
-                }
+                                   }
             }
     }
 }
