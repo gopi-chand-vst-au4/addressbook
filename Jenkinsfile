@@ -40,6 +40,7 @@ pipeline{
             steps{
                 script{
                     echo "Deploying the app"
+                    sh 'kubectl version'
                     sh 'kubectl get nodes'
                     sh 'kubectl create deployment nginx-deployment --image=nginx'
                                    }
