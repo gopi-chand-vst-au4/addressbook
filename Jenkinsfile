@@ -29,7 +29,7 @@ pipeline{
 
         when{
             expression{
-                BRANCH_NAME =='b1'
+                BRANCH_NAME =='master'
             }
         }
 
