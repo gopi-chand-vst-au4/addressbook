@@ -1,56 +1,60 @@
 pipeline{
-    agent none
+
+    agent any 
     tools{
-        jdk 'myjava'
+        jdk 'java'
         maven 'mymaven'
     }
+ 
     environment{
         NEW_VERSION='1.4.0'
     }
     stages{
-        stage("COMPILE"){
-            agent {label 'linux_slave'}
-            steps{
-                script{
-                     echo "Compiling the code"
-                     git 'https://github.com/preethid/addressbook.git'
-                     sh 'mvn compile'
-                }
+       
+    
+     stage("compalition"){
+
+         steps{
+            script{
+               echo "compiling the code"
+               git 'https://github.com/gopi-chand-vst-au4/addressbook.git'
+               sh 'mvn compile'
+
+
             }
-                    }
-        stage("UnitTest"){
-            agent any
-            
-              steps{
-                script{
-             echo "Run the unit test"
-             sh 'mvn test'
         }
-              }
-              post{
-                  always{
-                      junit 'target/surefire-reports/*.xml'
-                  }
-              }
-        }
-        stage("Package"){
-            agent {label 'linux_slave'}
-              steps{
-                script{
-              echo "Building the app"
-              echo "building version ${NEW_VERSION}"
-              sh 'mvn package'
-        }
+        
     }
-        }
-    stage("Deploy"){
-      
+    stage(unittest){
+
         steps{
             script{
-                echo "Deploying the app"
-                echo "Deploying ${NEW_VERSION}"
+        echo "run the test unit"
+        sh 'mvn test'
+    }
+        }
+        post{
+            always{
+                junit 'target/surefire-reports/*.xml'
             }
         }
+
     }
+    stage("package"){
+        steps{
+            script{
+        echo "Building the app"
+        echo "building version ${NEW_VERSION}"
+        sh 'mvn compile'
+           }
+
     }
+
+    }
+
+    }
+
+    
+
 }
+
